@@ -36,7 +36,7 @@ def generate_launch_description():
             executable='static_transform_publisher',
             namespace='',
             output='screen',
-            arguments=['0.046', '0.0', '0.107', '-1.5708', '0.0', '0.0', 'base_link', 'android_camera']
+            arguments=['0.046', '0.0', '0.107', '-1.5708', '0.0', '0.0', 'android_camera', 'ldlidar_base']
         )
         
     ])

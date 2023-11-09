@@ -37,7 +37,6 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
     use_namespace = LaunchConfiguration('use_namespace')
     slam = LaunchConfiguration('slam')
-    map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
     autostart = LaunchConfiguration('autostart')
@@ -56,8 +55,7 @@ def generate_launch_description():
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
-        'use_sim_time': use_sim_time,
-        'yaml_filename': map_yaml_file}
+        'use_sim_time': use_sim_time}
 
     # Only it applys when `use_namespace` is True.
     # '<robot_namespace>' keyword shall be replaced by 'namespace' launch argument
@@ -93,10 +91,6 @@ def generate_launch_description():
         'slam',
         default_value='False',
         description='Whether run a SLAM')
-
-    declare_map_yaml_cmd = DeclareLaunchArgument(
-        'map',
-        description='Full path to map yaml file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',
@@ -170,7 +164,6 @@ def generate_launch_description():
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_use_namespace_cmd)
     ld.add_action(declare_slam_cmd)
-    ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_autostart_cmd)

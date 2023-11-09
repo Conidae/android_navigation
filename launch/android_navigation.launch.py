@@ -21,7 +21,7 @@ def generate_launch_description():
         IncludeLaunchDescription(
             launch_description_source=([
                 get_package_share_directory('ldlidar_node'),
-                'launch/ldlidar_with_mgr.launch.py'
+                '/launch/ldlidar_with_mgr.launch.py'
             ])
         ),
         IncludeLaunchDescription(

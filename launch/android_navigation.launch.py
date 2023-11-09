@@ -27,7 +27,7 @@ def generate_launch_description():
         IncludeLaunchDescription(
             launch_description_source=([
                 get_package_share_directory('android_navigation'),
-                '/launch/android_navigation.launch.py'
+                '/launch/android_bringup.launch.py'
             ])
         ),
         Node(

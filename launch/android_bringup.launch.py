@@ -24,8 +24,9 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
-from launch_ros.descriptions import ParameterFile
+from launch_ros.descriptions import ParameterFile, ComposableNode
 from nav2_common.launch import RewrittenYaml, ReplaceString
+from launch_ros.actions import LoadComposableNodes
 
 
 def generate_launch_description():
@@ -43,6 +44,7 @@ def generate_launch_description():
     use_composition = LaunchConfiguration('use_composition')
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
+    container_name = LaunchConfiguration('container_name')
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
@@ -92,6 +94,11 @@ def generate_launch_description():
         default_value='False',
         description='Whether run a SLAM')
 
+    declare_map_yaml_cmd = DeclareLaunchArgument(
+        'map',
+        default_value=os.path.join(get_package_share_directory('android_navigation'),'maps','map.yaml'),
+        description='Full path to map yaml file to load')
+
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
@@ -117,6 +124,23 @@ def generate_launch_description():
     declare_log_level_cmd = DeclareLaunchArgument(
         'log_level', default_value='info',
         description='log level')
+        
+    declare_container_name_cmd = DeclareLaunchArgument(
+        'container_name', default_value='nav2_container',
+        description='the name of conatiner that nodes will load in if use composition')
+    
+    container_name_full = (namespace, '/', container_name)
+
+    load_composable_nodes = LoadComposableNodes(
+        condition=IfCondition(use_composition),
+        target_container=container_name_full,
+        composable_node_descriptions=[
+            ComposableNode(
+                package='nav2_map_server',
+                plugin='nav2_map_server::MapServer',
+                name='map_server',
+                parameters=[configured_params],
+                remappings=remappings)])
 
     # Specify the actions
     bringup_cmd_group = GroupAction([
@@ -164,6 +188,7 @@ def generate_launch_description():
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_use_namespace_cmd)
     ld.add_action(declare_slam_cmd)
+ 
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_autostart_cmd)
@@ -171,7 +196,9 @@ def generate_launch_description():
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
 
+
     # Add the actions to launch all of the navigation nodes
     ld.add_action(bringup_cmd_group)
+
 
     return ld

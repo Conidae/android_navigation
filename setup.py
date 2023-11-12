@@ -25,6 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'cmd_gps_wp_node=android_navigation.cmd_gps_wp_node:main'
         ],
     },
 )
